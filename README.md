@@ -6,7 +6,7 @@ Repository for image and container creation with sonarqube with the purpose of c
 
 #### Motivation
 
-    The main motivation is keep local sonarqube instance with replica of main sonar for faster develope and code check without larges pipelines.
+The main motivation is keep local sonarqube instance with replica of main sonar for faster develope and code check without larges pipelines.
 
 ## Use
 
