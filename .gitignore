@@ -1,0 +1,7 @@
+
+tmp/
+tmp-sync/
+
+*.pyc
+
+.remote_to_local_ready

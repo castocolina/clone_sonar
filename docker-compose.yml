@@ -1,0 +1,40 @@
+#
+version: "3.7"
+
+services:
+  sonar_local:
+    image: owasp/sonarqube
+    env_file: env
+    # entrypoint: bash /opt/sonarqube/bin/entrypoint.sh
+    # build: .
+    deploy:
+      resources:
+        limits:
+          cpus: 2'
+          memory: 2G
+        reservations:
+          cpus: "0.25"
+          memory: 256M
+    ports:
+      - "9000:9000"
+      - "9092:9092"
+    # volumes:
+    #   - ./entrypoint.sh:/opt/sonarqube/bin/entrypoint.sh:ro
+    #   - ./extensions/plugins:/opt/sonarqube/tmp-libs/extensions/plugins:ro
+    #   - ./lib/bundled-plugins:/opt/sonarqube/tmp-libs/lib/bundled-plugins:ro
+    #   - ./sync_script:/opt/sonarqube/sync_script:ro
+
+  sonar_remote:
+    image: owasp/sonarqube
+    env_file: env
+    deploy:
+      resources:
+        limits:
+          cpus: 2'
+          memory: 2G
+        reservations:
+          cpus: "0.25"
+          memory: 256M
+    ports:
+      - "9100:9000"
+      - "9192:9092"

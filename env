@@ -1,0 +1,9 @@
+SONARQUBE_WEB_JVM_OPTS=-Duser.timezone=America/Santiago
+_JAVA_OPTIONS=-Duser.timezone=America/Santiago
+
+SONAR_LOCAL_BASE_URL=http://127.0.0.1:9000
+SONAR_LOCAL_USER=admin
+SONAR_LOCAL_PASSWD=admin
+SONAR_REMOTE_BASE_URL=http://127.0.0.1:9100
+SONAR_TMP_SYNC=tmp-sync
+SONAR_BASEDIR_SYNC=/opt/sonarqube/sync_script
