@@ -49,15 +49,6 @@ The default SonarQube admin credentials are:
     docker exec -it clone_sonar_sonar_local_1 /bin/bash
 ```
 
-- Importar los profiles, qualitygates y condiciones del sonar central
-
-Para este ultimo paso se deben hacer lo siguiente:
-
-> - Editar el archivo .env que contiene este repositorio. Se debe colocar la IP:puerto, las credenciales de su sonarqube.
-
-- Instalar python 2.6.6 o superior
-- Ejecutar el archivo _sync_script/test_local.sh_
-
 ## Changelog
 
 - ...
