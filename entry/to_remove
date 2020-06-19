@@ -1,0 +1,14 @@
+# lines starting with dash (-), hashtag (#) or empty are ignored
+
+sonar-csharp-plugin*
+sonar-css-plugin*
+sonar-flex-plugin*
+sonar-go-plugin*
+sonar-html-plugin*
+sonar-javascript-plugin*
+sonar-php-plugin*
+sonar-python-plugin*
+sonar-ruby-plugin*
+sonar-scm-svn-plugin*
+sonar-typescript-plugin*
+sonar-vbnet-plugin*

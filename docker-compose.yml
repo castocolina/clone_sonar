@@ -3,10 +3,10 @@ version: "3.7"
 
 services:
   sonar_local:
-    image: owasp/sonarqube
+    # image: sonarqube:8.3-community
     env_file: env
     # entrypoint: bash /opt/sonarqube/bin/entrypoint.sh
-    # build: .
+    build: .
     deploy:
       resources:
         limits:
@@ -25,7 +25,7 @@ services:
     #   - ./sync_script:/opt/sonarqube/sync_script:ro
 
   sonar_remote:
-    image: owasp/sonarqube
+    image: sonarqube:8.3-community
     env_file: env
     deploy:
       resources:
