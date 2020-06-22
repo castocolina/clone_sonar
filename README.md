@@ -1,8 +1,8 @@
-# clone_sonar
+# sonar_sync
 
-# Compose SonarQube 7.x
+# Compose SonarQube 8.x-community
 
-Repository for image and container creation with sonarqube with the purpose of clone remote base sonarqube.
+The purpose of this repository is sync profiles & quality gates from remote sonarqube with tasks for image generation.
 
 #### Motivation
 
@@ -13,25 +13,25 @@ The main motivation is keep local sonarqube instance with replica of main sonar 
 ### 1) Clone repository
 
 ```bash
-git clone git@github.com:castocolina/clone_sonar.git && cd clone_sonar
+git clone git@github.com:castocolina/sonar_sync.git && cd sonar_sync
 ```
 
 ### 2) Start container:
 
 ```bash
-    docker-compose up
+    make up
 ```
 
-When news rules and plugins are installed with need sync to check differences. Please make eventually `git pull` to check differences on this repo.
+When news plugins and rules are installed with need sync to check differences. Please make eventually `git pull` to check differences on this repo.
 
 ```bash
-    docker-compose up --force-recreate
+    make build
 ```
 
 If you make `git pull` and see changes on _**Dockerfile**_ exec:
 
 ```bash
-    docker-compose down && docker-compose up --build
+    make build
 ```
 
 ## Credentials
@@ -39,38 +39,37 @@ If you make `git pull` and see changes on _**Dockerfile**_ exec:
 The default SonarQube admin credentials are:
 
 - user:admin
-- passwd:admin
+- password:admin
 
 ## TIPS:
 
 - For CLI interaction exec:
 
 ```bash
-    docker exec -it clone_sonar_sonar_local_1 /bin/bash
+    # enter sonar_local instance
+    make enter
 ```
 
 ## Changelog
 
-- ...
+- Delete olds or unnecessary plugins on docker build
+- Install extra local plugins on docker build
 
 ## TODO:
 
 - Basic
-  - Check exec to compare remote plugins, quality profiles with rules, compare quality gates.
-  - Check and remote plugins
-  - Install remote plugins on docker build
   - Download remote not 'BuiltIn' quality profiles
-  - Sync remote quality profile to local instance
   - Download remote not 'BuiltIn' quality gates
   - Sync remote quality profile to local instance
-- Basic
-  - Install extra local plugins
-  - Create extra local quality profiles
+  - Sync remote quality profile to local instance
+  - Merge multiple quality profiles to new one
+  - Merge multiple quality gates to new one
   - Enable/Disable local extra rules for profiles
   - Configure local extra quality gates / rules
+  - Set defaults quality profiles
+  - Set defaults quality gates
+  - Set system configuration
+- Advance:
+  - Compare remote plugins, quality profiles with rules, compare quality gates.
 
 ### References:
-
-    - https://github.com/gravitational/configure
-    - https://github.com/sirupsen/logrus
-    - https://github.com/fatih/color

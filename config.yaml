@@ -1,0 +1,21 @@
+remote:
+  base_url: http://127.0.0.1:9100
+  user: admin
+  password: admin
+local:
+  base_url: http://127.0.0.1:9000
+  user: admin
+  password: admin
+store:
+  base: tmp
+  qg: qg
+  qp: qp
+to_sync:
+  # Single value with asterisk or array with multiple values
+  qg: "*"
+  # Single value with asterisk or array with multiple values
+  qp: "*"
+defaults:
+  qp:
+    - name: p1
+      lang: java
