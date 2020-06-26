@@ -12,6 +12,4 @@ EXPOSE 9000
 # Timezone
 RUN unlink /etc/localtime && ln -s /usr/share/zoneinfo/America/Santiago /etc/localtime && date
 
-# WORKDIR $SONARQUBE_HOME
-
 RUN set -x && chmod +x /plugin-updater.sh && bash /plugin-updater.sh

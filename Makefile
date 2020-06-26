@@ -28,5 +28,8 @@ check_java:
 check_groovy:
 	bash scripts/check_groovy.sh
 
-download: check_groovy
+clean:
+	rm -rfv tmp
+
+download: clean check_groovy
 	groovy -cp scripts scripts/Download.groovy

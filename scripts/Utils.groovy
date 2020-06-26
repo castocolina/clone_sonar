@@ -50,6 +50,7 @@ class Utils {
         }
         if(sErr?.toString()?.trim()) {
             printError(cmd, "CMD")
+            printError(sErr)
         }
         return [sOut, sErr]
     }

@@ -7,7 +7,7 @@ local:
   user: admin
   password: admin
 store:
-  base: tmp
+  base: tmp/
   qg: qg
   qp: qp
 to_sync:
