@@ -58,8 +58,8 @@ The default SonarQube admin credentials are:
 ## TODO:
 
 - Basic
-  - Download remote not 'BuiltIn' quality profiles
-  - Download remote not 'BuiltIn' quality gates
+  - ~~Download remote not 'BuiltIn' quality profiles~~
+  - ~~Download remote not 'BuiltIn' quality gates~~
   - Sync remote quality profile to local instance
   - Sync remote quality profile to local instance
   - Merge multiple quality profiles to new one
