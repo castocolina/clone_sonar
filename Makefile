@@ -7,7 +7,7 @@ start:
 stop:
 	docker-compose stop
 
-down:
+destroy:
 	docker-compose down
 
 build:
@@ -33,3 +33,6 @@ clean:
 
 download: clean check_groovy
 	groovy -cp scripts scripts/Download.groovy
+
+upload: check_groovy
+	groovy -cp scripts scripts/Upload.groovy

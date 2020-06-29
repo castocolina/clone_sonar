@@ -54,13 +54,13 @@ The default SonarQube admin credentials are:
 
 - Delete olds or unnecessary plugins on docker build
 - Install extra local plugins on docker build
+- Download remote not 'BuiltIn' quality profiles
+- Download remote not 'BuiltIn' quality gates
+- Upload quality profile to local instance
 
 ## TODO:
 
 - Basic
-  - ~~Download remote not 'BuiltIn' quality profiles~~
-  - ~~Download remote not 'BuiltIn' quality gates~~
-  - Sync remote quality profile to local instance
   - Sync remote quality profile to local instance
   - Merge multiple quality profiles to new one
   - Merge multiple quality gates to new one
