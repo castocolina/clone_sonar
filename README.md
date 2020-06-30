@@ -58,6 +58,7 @@ The default SonarQube admin credentials are:
 - Download remote not 'BuiltIn' quality gates
 - Upload quality profiles to local instance
 - Upload quality gates to local instance
+- Login with token
 
 ## TODO:
 
