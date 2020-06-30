@@ -5,17 +5,25 @@ import java.nio.charset.StandardCharsets
 
 class Utils {
 
-    static loadYaml (String filename) {
+    static loadYaml (CharSequence filename) {
         def yamlFile = new File(filename)
         return new Yaml().load(new FileInputStream(yamlFile))
     }
 
-    static accessOrExit (String serverUrl, String user, String passwd) {
+    static accessOrExit (CharSequence serverUrl, String token, CharSequence user, CharSequence passwd) {
         def accessCmd = """
         curl -s -S -f -X POST -L '$serverUrl/api/authentication/login' \\
         -H 'Content-Type: application/x-www-form-urlencoded' \\
         --data 'login=$user&password=$passwd' && echo OK
         """
+
+        if(token) {
+            accessCmd = """
+            curl -s -S -f -L '$serverUrl/api/user_tokens/search' \\
+            -u $token: > /dev/null && echo OK
+            """
+        }
+
         def cmdFile = createCmd(accessCmd)
         def result = waitOrKillCmd(cmdFile)
         if(!result[0]){
@@ -24,7 +32,11 @@ class Utils {
         }
     }
 
-    static authBasic(String user, String pass) {
+    static createBase64Token(CharSequence user = '', CharSequence pass = "", CharSequence token = '') {
+        if(token){
+            user = token
+            pass = ""
+        }
         return Base64.getEncoder().encodeToString(("$user:$pass").getBytes(StandardCharsets.UTF_8))
     }
 

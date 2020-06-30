@@ -2,7 +2,7 @@
 import static Utils.loadYaml
 import static Utils.textColor
 import static Utils.accessOrExit
-import static Utils.authBasic
+import static Utils.createBase64Token
 import static Utils.createCmd
 import static Utils.waitOrKillCmd
 import static Utils.findByName
@@ -15,10 +15,10 @@ println ()
 println textColor("LOCAL LOGIN VERIFICATION!!", 'green', 'default', 'bold')
 println ()
 
-accessOrExit(config.local.base_url, config.local.user, config.local.password)
+accessOrExit(config.local.base_url, config.local.token, config.local.user, config.local.password)
 
-def basicAuth = "Basic " + authBasic(config.local.user, config.local.password)
-def authHeader = "Authorization: $basicAuth"
+def token = createBase64Token(config.local.user, config.local.password, config.local.token)
+def authHeader = "Authorization: Basic $token"
 
 def qgFolder = config.store.base + config.store.qg
 def qpFolder = config.store.base + config.store.qp

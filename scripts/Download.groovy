@@ -2,7 +2,7 @@
 import static Utils.loadYaml
 import static Utils.textColor
 import static Utils.accessOrExit
-import static Utils.authBasic
+import static Utils.createBase64Token
 import static Utils.createCmd
 import static Utils.waitOrKillCmd
 
@@ -14,10 +14,10 @@ println ()
 println textColor("REMOTE LOGIN VERIFICATION!!", 'green', 'default', 'bold')
 println ()
 
-accessOrExit(config.remote.base_url, config.remote.user, config.remote.password)
+accessOrExit(config.remote.base_url, config.remote.token, config.remote.user, config.remote.password)
 
-def basicAuth = "Basic " + authBasic(config.remote.user, config.remote.password)
-def authHeader = "Authorization: $basicAuth"
+def token = createBase64Token(config.remote.user, config.remote.password, config.remote.token)
+def authHeader = "Authorization: Basic $token"
 
 def qgFolder = config.store.base + config.store.qg
 def qpFolder = config.store.base + config.store.qp

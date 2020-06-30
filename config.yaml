@@ -2,10 +2,12 @@ remote:
   base_url: http://127.0.0.1:9100
   user: admin
   password: admin
+  token:
 local:
   base_url: http://127.0.0.1:9000
   user: admin
   password: admin
+  token:
 store:
   base: tmp/
   qg: qg
