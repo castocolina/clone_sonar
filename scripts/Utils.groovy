@@ -102,4 +102,21 @@ class Utils {
         }
         return result
     }
+
+    static findByNameAndLang(def list, String name, String lang, boolean ignoreCase = false){
+        def result
+        for (item in list){
+            def iName = item['name']
+            def iLang = item['language']
+            if (iName?.equals(name) || (ignoreCase && iName?.equalsIgnoreCase(name))) {
+                result = item
+            }
+            if (result && lang &&
+                (iLang?.equals(lang) || (ignoreCase && iLang?.equalsIgnoreCase(lang)))
+                    ) {
+                break
+            }
+        }
+        return result
+    }
 }

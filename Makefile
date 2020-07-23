@@ -36,3 +36,6 @@ download: clean check_groovy
 
 upload: check_groovy
 	groovy -cp scripts scripts/Upload.groovy
+
+merge: check_groovy
+	groovy -cp scripts scripts/Merge.groovy
