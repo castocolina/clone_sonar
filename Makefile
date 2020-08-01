@@ -22,9 +22,6 @@ enter:
 enterr:
 	docker exec -it sonar_sync_sonar_remote_1 /bin/bash
 
-check_java:
-	bash scripts/check_java.sh
-
 check_groovy:
 	bash scripts/check_groovy.sh
 
