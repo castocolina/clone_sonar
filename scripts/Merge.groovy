@@ -8,10 +8,14 @@ import static Utils.findByName
 import static Utils.findByNameAndLang
 import static Utils.printSuccess
 import static Utils.printError
+import static Utils.downloadFile
+import static Utils.wipeConditions
+import static Utils.updateConditions
 
 import groovy.json.JsonSlurper
 
 def config = loadYaml("config.yaml")
+def SEPARATOR = '====================================================='
 
 println ()
 println textColor("LOCAL LOGIN VERIFICATION!!", 'green', 'default', 'bold')
@@ -22,7 +26,6 @@ accessOrExit(config.local.base_url, config.local.token, config.local.user, confi
 def token = createBase64Token(config.local.user, config.local.password, config.local.token)
 def authHeader = "Authorization: Basic $token"
 
-println textColor("Merge Quality profiles!!", 'green', 'default', 'bold')
 assert config.to_merge.qp.from.size() > 1
 
 def qpFrom = config.to_merge.qp.from
@@ -31,16 +34,23 @@ def qpTarget = config.to_merge.qp.to
 def qpLang = config.to_merge.qp.lang
 def qpBase = qpFrom[0]
 def qpOthers = qpFrom.subList(1, qpSize)
+// --------------
+def qgFrom = config.to_merge.qg.from
+def qgSize = qgFrom.size()
+def qgTarget = config.to_merge.qg.to
+def qgLang = config.to_merge.qg.lang
+def qgBase = qgFrom[0]
+def qgOthers = qgFrom.subList(1, qgSize)
+// --------------
 def localQgatesFile = "${config.store.base}/local-qgates.json"
 def localQProfFile = "${config.store.base}/local-qprofiles.json"
 
-println textColor("FROM ==> $qpBase + $qpOthers", 'red')
-println textColor("TARGET ==> $qpTarget", 'blue')
-println()
 
+println()
+println textColor("$SEPARATOR", 'green', 'default', 'bold')
+println ()
 
 println textColor("Download LOCAL QGate & Qprofile LIST!!", 'green', 'default', 'bold')
-println ()
 def cmdStr = ""
 def cmdFile = ""
 
@@ -59,22 +69,34 @@ for (qProfile in qpFrom) {
         System.exit(1)
     }
 }
-
 println ()
 
+println textColor("Check if origin gates exist", 'yellow', 'default', 'bold')
+def qGates = new JsonSlurper().parse(new File(localQgatesFile)).qualitygates
+for (qGate in qgFrom) {
+    def localQGate = findByName(qGates, qGate)
+    if(localQGate){
+        printSuccess("Gate exist ==> ([$localQGate.name] '$localQGate.id' ")
+    } else {
+        printError("Gate not found [$qGate]")
+        println ()
+        System.exit(1)
+    }
+}
+println ()
+println textColor("$SEPARATOR", 'green', 'default', 'bold')
+println ()
 
+println textColor("Copy target from first QProfile", 'yellow', 'default', 'bold')
 def localQProfileBase = findByNameAndLang(qProfiles, qpBase, qpLang)
 def localQProfileTarget = findByNameAndLang(qProfiles, qpTarget, qpLang)
-
 cmdStr = """
 curl -s -S -f -X POST -L '$config.local.base_url/api/qualityprofiles/copy'  \\
     -H "Content-Type: application/x-www-form-urlencoded"  -H '$authHeader' \\
-    --data "fromKey=$localQProfileBase.key&toName=$qpTarget"  && echo "QProfile COPIED!!!"
+    --data "fromKey=$localQProfileBase.key&toName=$qpTarget"  && printf "\nQProfile COPIED!!!\n"
 """
 cmdFile = createCmd(cmdStr)
 result = waitOrKillCmd(cmdFile)
-
-
 println ()
 
 downloadFile (localQProfFile, "$config.local.base_url/api/qualityprofiles/search", authHeader)
@@ -88,20 +110,44 @@ for (qProfile in qpOthers) {
     cmdStr = """
     curl -s -S -f -X POST -L '$config.local.base_url/api/qualityprofiles/activate_rules'  \\
         -H "Content-Type: application/x-www-form-urlencoded"  -H '$authHeader' \\
-        --data "activation=true&qprofile=$localQProfile.key&targetKey=$localQProfileTarget.key"  && echo "Rules ACTIVATED!!!"
+        --data "activation=true&qprofile=$localQProfile.key&targetKey=$localQProfileTarget.key"  && printf "\nRules ACTIVATED!!!\n"
     """
     cmdFile = createCmd(cmdStr)
     result = waitOrKillCmd(cmdFile)
 }
-
+println ()
+println textColor("$SEPARATOR", 'green', 'default', 'bold')
 println ()
 
-def downloadFile(String targetFile, String url, String authHeader) {
-    def cmdStr = """
-    curl -s -S -f -X GET \\
-        -o "$targetFile" -L '$url'  \\
-        -H '$authHeader' && echo Profiles Dowloaded OK
+println textColor("Create or refresh target QGate", 'yellow', 'default', 'bold')
+def localQGateBase = findByName(qGates, qgBase)
+def localQGateTarget = findByName(qGates, qgTarget)
+
+if(localQGateTarget){
+    println textColor("Gate exist and will be wiped ==> [$localQGateTarget.name] '$localQGateTarget.id'", 'red', 'white')
+    wipeConditions(config.local.base_url, authHeader, localQGateTarget.id)
+} else {
+    printSuccess("Target QGate does not exist and will be created => $qgTarget")
+    cmdStr = """
+    curl -s -S -f -X POST -L '$config.local.base_url/api/qualitygates/create'  \\
+        -H "Content-Type: application/x-www-form-urlencoded"  -H '$authHeader' \\
+        --data "name=$qgTarget"  && printf "\nQGate CREATED!!!\n"
     """
-    def cmdFile = createCmd(cmdStr)
-    return waitOrKillCmd(cmdFile)
+    cmdFile = createCmd(cmdStr)
+    result = waitOrKillCmd(cmdFile)
 }
+println ()
+
+downloadFile (localQgatesFile, "$config.local.base_url/api/qualitygates/list", authHeader)
+qGates = new JsonSlurper().parse(new File(localQgatesFile)).qualitygates
+localQGateTarget = findByName(qGates, qgTarget)
+
+for (qGate in qgFrom) {
+    println textColor("\tMERGE metricts from '$qGate' to '$qgTarget'", "green")
+    def localQGate = findByName(qGates, qGate)
+    def currGate = new JsonSlurper().parse(new URL("$config.local.base_url/api/qualitygates/show?id=$localQGate.id"))
+    updateConditions(config.local.base_url, authHeader, localQGateTarget.id, currGate.conditions)
+}
+
+println ()
+println ()

@@ -60,13 +60,13 @@ The default SonarQube admin credentials are:
 - Upload quality gates to local instance
 - Login with token
 - Merge multiple quality profiles to new one
+- Merge multiple quality gates to new one
 
 ## TODO:
 
 - Basic
-  - Merge multiple quality gates to new one
   - Enable/Disable local extra rules for profiles
-  - Configure local extra quality gates / rules
+  - Create or update local extra metrics for gates
   - Set defaults quality profiles
   - Set defaults quality gates
   - Set system configuration

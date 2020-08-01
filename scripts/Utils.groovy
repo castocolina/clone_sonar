@@ -2,6 +2,7 @@
 
 import org.yaml.snakeyaml.Yaml
 import java.nio.charset.StandardCharsets
+import groovy.json.JsonSlurper
 
 class Utils {
 
@@ -91,10 +92,10 @@ class Utils {
         return new String((char) 27) + "[${textEffects}${fgColors[fgColor]};${bgColors[bgColor]}m${text}" + new String((char) 27) + "[0m"
     }
 
-    static findByName(def list, String name, boolean ignoreCase = false){
+    static findByName(def list, String name, boolean ignoreCase = false, property = 'name'){
         def result
         for (item in list){
-            def iName = item['name']
+            def iName = item[property]
             if (iName?.equals(name) || (ignoreCase && iName?.equalsIgnoreCase(name))) {
                 result = item
                 break
@@ -119,4 +120,62 @@ class Utils {
         }
         return result
     }
+
+    static downloadFile(String targetFile, String url, String authHeader) {
+        def cmdStr = """
+        curl -s -S -f -X GET \\
+            -o "$targetFile" -L '$url'  \\
+            -H '$authHeader' && echo Dowloaded OK
+        """
+        def cmdFile = createCmd(cmdStr)
+        return waitOrKillCmd(cmdFile)
+    }
+
+    static wipeConditions(String baseURL, String authHeader, Integer gateId) {
+        def currGate = new JsonSlurper().parse(new URL("$baseURL/api/qualitygates/show?id=$gateId"))
+        def currConditions = currGate.conditions
+        for (condition in currConditions) {
+            println textColor("\t\tDELETE condition >> id: $condition.id, metric: $condition.metric", 'yellow')
+            def cmdStr = """
+            curl -s -S -f -X POST -L '$baseURL/api/qualitygates/delete_condition'  \\
+                -H "Content-Type: application/x-www-form-urlencoded" -H '$authHeader' \\
+                --data "id=$condition.id" && \\
+                printf "\nOK"
+            """
+            def cmdFile = createCmd(cmdStr)
+            waitOrKillCmd(cmdFile)
+        }
+        
+    }
+
+    static updateConditions(String baseURL, String authHeader, Integer gateId, ArrayList newConditions) {
+        def currGate = new JsonSlurper().parse(new URL("$baseURL/api/qualitygates/show?id=$gateId"))
+        def currConditions = currGate.conditions
+        for (condition in newConditions) {
+            def localCond = findByName(currConditions, condition.metric, true, 'metric')
+            if (localCond) {
+                println textColor("\t\tEXISTING condition >> id: $localCond.id, metric: ${condition.metric}. Will be UPDATED!", 'yellow')
+                def cmdStr = """
+                curl -s -S -f -X POST -L '$baseURL/api/qualitygates/update_condition'  \\
+                    -H "Content-Type: application/x-www-form-urlencoded" -H '$authHeader' \\
+                    --data "id=$localCond.id&error=$condition.error&metric=$condition.metric&op=$condition.op" && \\
+                    printf "\nOK"
+                """
+                def cmdFile = createCmd(cmdStr)
+                waitOrKillCmd(cmdFile)
+            } else {
+                println textColor("\t\tNEW condition >> metric: ${condition.metric}. Will be CREATED!", 'cyan')
+                def cmdStr = """
+                curl -s -S -f -X POST -L '$baseURL/api/qualitygates/create_condition'  \\
+                    -H "Content-Type: application/x-www-form-urlencoded" -H '$authHeader' \\
+                    --data "gateId=$gateId&error=$condition.error&metric=$condition.metric&op=$condition.op" && \\
+                    printf "\nOK"
+                """
+                def cmdFile = createCmd(cmdStr)
+                waitOrKillCmd(cmdFile)
+            }
+        }
+
+    }
+
 }

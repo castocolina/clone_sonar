@@ -17,13 +17,13 @@ to_merge:
     from: # All profiles must have same language
       - my-good-way
       - My way 2.0
-    to: casto way # If profile exist will be deleted and copy from 'from[0]' if exist
+    to: casto way # If profile exist will be deleted and copy from 'from[0]'
     lang: java
   qg:
     from: # All profiles must have same language
-      - casto way 1
-      - casto way 2
-    to: casto way # If gate exist will be deleted and copy from 'from[0]' if exist
+      - my-good-way
+      - My way
+    to: my new way # If gate exist will be wiped
 to_sync:
   # Single value with asterisk or array with multiple values
   qg: "*"
